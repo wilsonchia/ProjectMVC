@@ -1,0 +1,23 @@
+﻿@using MVCEmp.Models
+@model EmployeeJobDetailModels
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form1" }))
+{
+    <table style="width:900px; text-align:center" border="1" cellpadding="0" cellspacing="0">
+        <tr style="height:35px; color:black">
+            <td style="width:100%; text-align:left">
+                查詢條件 : @Html.TextBox("searchValue", (string)ViewBag.searchValue, new { Style = "width:800px;height:35px" })
+                @Html.ActionLink("新增員工職務", "Create", "EmployeeJobDetail")
+                <input type="submit" id="btnsubmit" value="查詢" style="width:50px; height:35px" />
+            </td>
+        </tr>
+        <tr><td style="width:100%">@{Html.RenderPartial("List", Model);}</td></tr>
+    </table>
+
+}
+

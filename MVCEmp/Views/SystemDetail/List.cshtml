@@ -1,0 +1,101 @@
+﻿@using MVCEmp.Models
+@model SystemDetailModels
+@{ Layout = null; }
+
+<script type="text/javascript">
+
+    FormPageFirst = function () { $('#hidePageIndex').val('1'); $('#form1').submit(); }
+    FormPageFinal = function () { $('#hidePageIndex').val($('#hidePageCount').val()); $('#form1').submit(); }
+    FormPagePrev = function () { $('#hidePageIndex').val(eval(eval($('#hidePageIndex').val()) - 1)); $('#form1').submit(); }
+    FormPageNext = function () { $('#hidePageIndex').val(eval(eval($('#hidePageIndex').val()) + 1)); $('#form1').submit(); }
+    FormPageSelect = function (newPageIndex) { $('#hidePageIndex').val(newPageIndex); $('#form1').submit(); }
+
+</script>
+@Html.Hidden("hideDataCount", (string)ViewBag.valSumDataCount)
+@Html.Hidden("hideRowPage", (string)ViewBag.valPageDataCount)
+@Html.Hidden("hidePageCount", (string)ViewBag.valSumPageCount)
+@Html.Hidden("hidePageIndex", (string)ViewBag.valPageIndex)
+
+<table style="width:100%;" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td style="width:100%;" colspan="9">
+            <input type="submit" id="PageFirst" value="第一頁" style="width:70px; height:35px"
+                   @if (Convert.ToInt32(ViewBag.valPageIndex) == 1) { @Html.Raw("disabled") ; } else { @Html.Raw("") ; @Html.Raw("onclick='FormPageFirst()'") ; } />
+            <input type="submit" id="PagePrev" value="上一頁" style="width:70px; height:35px"
+                   @if (Convert.ToInt32(ViewBag.valPageIndex) == 1) { @Html.Raw("disabled")  ; } else { @Html.Raw("")  ; @Html.Raw("onclick='FormPagePrev()'")  ; } />
+            <select id="PageSelect" style="width:70px; height:35px" onchange="FormPageSelect(this.value);">
+                @for (int i = 1; i <= Convert.ToInt32((string)ViewBag.valSumPageCount); i++) {
+                    <option value="@i.ToString()" @Html.Raw((Convert.ToInt32(ViewBag.valPageIndex) == Convert.ToInt32(i)) ? "selected" : "")>@i.ToString()</option>
+                }
+            </select>
+            <input type="submit" id="PageNext" value="下一頁" style="width:70px; height:35px"
+                   @if (Convert.ToInt32(ViewBag.valPageIndex) == Convert.ToInt32(ViewBag.valSumPageCount)) { @Html.Raw("disabled")  ; } else { @Html.Raw("")  ; @Html.Raw("onclick='FormPageNext()'")  ; } />
+            <input type="submit" id="PageFinal" value="最末頁" style="width:70px; height:35px"
+                   @if (Convert.ToInt32(ViewBag.valPageIndex) == Convert.ToInt32(ViewBag.valSumPageCount)) { @Html.Raw("disabled")   ; } else { @Html.Raw("")   ; @Html.Raw("onclick='FormPageFinal()'")   ; } />
+
+        </td>
+    </tr>
+    <tr><td style="width:100%" colspan="9"><hr /></td></tr>
+    <tr style="height:35px; color:black;font-size:18px">
+        <td style="width:50px; text-align:center">項次</td>
+        <td style="width:150px; text-align:center">類別</td>
+        <td style="width:100px; text-align:center">參數值</td>
+        <td style="width:150px; text-align:center">標題</td>
+        <td style="width:150px; text-align:center">說明</td>
+        <td style="width:150px; text-align:center">備註</td>
+        <td style="width:50px; text-align:center">狀態</td>
+        <td style="width:100px; text-align:center" colspan="2">更新</td>
+    </tr>
+    @{  int DataIndexTop = 0;
+        if (Convert.ToInt32(Model.valPageIndex) == 1)
+        {
+            DataIndexTop = 0;
+        } else {
+            if (Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Convert.ToInt32(Model.valPageIndex)-1)) > Convert.ToInt32(Model.valSumPageCount)) {
+                DataIndexTop = Convert.ToInt32(Model.valSumPageCount);
+            }
+            else
+            {
+                DataIndexTop = Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Convert.ToInt32(Model.valPageIndex) - 1) + 1);
+            }
+        }
+        int DataIndexDown = 0;
+        if (Convert.ToInt32(Model.valPageIndex) == 1)
+        {
+            if (Convert.ToInt32(Model.valSumDataCount) < Convert.ToInt32(Model.valPageDataCount))
+            {
+                DataIndexDown = Convert.ToInt32(Model.valSumDataCount);
+            }
+            else
+            {
+                DataIndexDown = Convert.ToInt32(Model.valPageDataCount);
+            }
+        }
+        else {
+            if (Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Model.valPageIndex)) > Convert.ToInt32(Model.valSumDataCount))
+            {
+                DataIndexDown = Convert.ToInt32(Model.valSumDataCount);
+            }
+            else
+            {
+                DataIndexDown = Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Model.valPageIndex));
+            }
+        }
+    }
+    @for (int i = DataIndexTop; i < DataIndexDown; i++)
+    {
+        <tr style="height:30px;color:blue;font-size:14px">
+            <td style="width:50px; text-align:center">@Convert.ToInt32(Convert.ToInt32(i)+1).ToString()</td>
+            <td style="width:150px; text-align:center">@Model.listSystemDetail[i].lSystemClass.ToString()</td>
+            <td style="width:100px; text-align:center">@Model.listSystemDetail[i].lSystemValue.ToString()</td>
+            <td style="width:150px; text-align:center">@Model.listSystemDetail[i].lSystemTitle.ToString()</td>
+            <td style="width:150px; text-align:center">@Model.listSystemDetail[i].lSystemNotation.ToString()</td>
+            <td style="width:150px; text-align:center">@Model.listSystemDetail[i].lSystemRemark.ToString()</td>
+            <td style="width:50px; text-align:center">@Model.listSystemDetail[i].lSystemStatus.ToString()</td>
+            <td style="width:50px; text-align:center">@Html.ActionLink("修改", "Update", "SystemDetail", new { cl = Model.listSystemDetail[i].lSystemClass, vl = Model.listSystemDetail[i].lSystemValue }, new AjaxOptions { HttpMethod = "POST" })</td>
+            <td style="width:50px; text-align:center">@Html.ActionLink("刪除", "Delete", "SystemDetail", new { cl = Model.listSystemDetail[i].lSystemClass, vl = Model.listSystemDetail[i].lSystemValue }, new AjaxOptions { HttpMethod = "POST" })</td>
+        </tr>
+        <tr><td style="width:100%" colspan="9"><hr /></td></tr>
+    }
+</table>
+

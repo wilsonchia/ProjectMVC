@@ -1,0 +1,32 @@
+﻿@using MVCEmp.Models
+@model EmployeeDetailModels
+@{
+    ViewBag.Title = "index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+
+    FormDataUpload = function () { $('#form1').attr('action', 'EmployeeDetail/DataUpload'); $('#form1').submit(); }
+    FormExcelOut = function () { $('#form1').attr('action', 'EmployeeDetail/OutExcelData'); $('#form1').submit(); }
+
+</script>
+<h2>Index</h2>
+@using (Html.BeginForm("Index", "EmployeeDetail", FormMethod.Post, new { id = "form1", enctype = "multipart/form-data" }))
+{
+    <table style="width:900px; text-align:center" border="1" cellpadding="0" cellspacing="0">
+        <tr style="height:35px; color:black">
+            <td style="width:400px; text-align:left">
+                查詢條件 : @Html.TextBox("searchValue", (string)ViewBag.searchValue, new { Style = "width:100px;height:35px" })
+                <input type="submit" id="btnsubmit" value="查詢" style="width:50px; height:35px" />
+                @Html.ActionLink("新增員工資料", "Create", "EmployeeDetail")
+            </td>
+            <td style="width:100px; text-align:right">上傳檔案 : </td>
+            <td style="width:200px; text-align:left"><input type="file" name="fileUpload" id="fileUpload" /></td>
+            <td style="width:200px; text-align:left">
+                <input type="button" id="btnUpload" value="上傳" style="width:50px; height:35px" onclick="FormDataUpload();" />
+                <input type="button" id="btnOutExcel" value="匯出範例檔" style="width:100px; height:35px" onclick="FormExcelOut();" />
+            </td>
+        </tr>
+        <tr><td style="width:100%" colspan="4">@{Html.RenderPartial("List", Model);}</td></tr>
+    </table>
+}

@@ -1,0 +1,62 @@
+﻿
+
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+
+    $(function ($) {
+        $('#checkSystemStatus').click(formCheckBox);
+        $('btnFormC').click(formCheckData);
+    });
+
+    formCheckBox = function () {
+        if ($('#checkSystemStatus').prop('checked') == true) {
+            $('#hideSystemStatus').val("O");
+        } else {
+            $('#hideSystemStatus').val("X");
+        }
+    }
+
+    formCheckData = function () {
+        if ($('#textSystemTitle').val() == "") { $('showMess').notify("系統標題不得空白!!"); $('textSystemTitle').focus(); return false; }
+    }
+
+</script>
+<h2>Update</h2>
+@using (Html.BeginForm("Update", "SystemDetail", FormMethod.Post, new { id = "form1" }))
+{
+    @Html.Hidden("hideSystemStatus", (string)ViewBag.valSystemStatus)
+    @Html.Hidden("hideSystemClass", (string)ViewBag.valSystemClass)
+    @Html.Hidden("hideSystemValue", (string)ViewBag.valSystemValue)
+    <table style="width:800px; text-align:center;font-size:15px;font-weight:bold" border="0" cellpadding="0" cellspacing="0">
+        <tr style="height:40px; font-weight:bold; font-size:24px"><td style="width:100%; text-align:center" colspan="4">修改系統參數</td></tr>
+        <tr style="height:40px">
+            <td style="width:100px; text-align:left">系統類別</td>
+            <td style="width:300px; text-align:left">@ViewBag.valSystemClass)</td>
+            <td style="width:100px; text-align:left">系統數值</td>
+            <td style="width:300px; text-align:left">@ViewBag.valSystemValue)</td>
+        </tr>
+        <tr style="height:40px">
+            <td style="width:100px; text-align:left">系統類別</td>
+            <td style="width:700px; text-align:left" colspan="3">@Html.TextBox("textSystemTitle", (string)ViewBag.valSystemTitle, new { Style = "width:100%; height:30px" })</td>
+        </tr>
+        <tr style="height:40px">
+            <td style="width:100px; text-align:left">系統說明</td>
+            <td style="width:300px; text-align:left">@Html.TextArea("textSystemNotation", (string)ViewBag.valSystemNotation, 10, 200, new { Style = "width:100%" })</td>
+            <td style="width:100px; text-align:left">系統備註</td>
+            <td style="width:300px; text-align:left">@Html.TextArea("textSystemRemark", (string)ViewBag.valSystemRemark, 10, 200, new { Style = "width:100%" })</td>
+        </tr>
+        <tr style="height:40px">
+            <td style="width:100px; text-align:left">開放使用</td>
+            <td style="width:300px; text-align:left">@Html.CheckBox("checkSystemStatus", ((string)ViewBag.valSystemStatus == "O") ? true : false) 可使用</td>
+            <td style="width:400px; text-align:left" colspan="2"><span id="showMess">@ViewBag.valShowDetail</span></td>
+        </tr>
+        <tr style="height:40px">
+            <td style="width:100%; text-align:center" colspan="4">
+                <input type="submit" id="btmFormC" value="Update" />
+            </td>
+        </tr>
+    </table>
+}

@@ -1,0 +1,68 @@
+﻿@using MVCEmp.Models
+@model EmployeeDetailModels
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+
+    $(function ($) {
+        $('#hideEmpSex').val('M');
+        $('input:radio[name="radioEmpSex"]').change(FormRadioChecked);
+        $('#btnFormC').click(FormDataCheck);
+    })
+
+    FormRadioChecked = function () {
+        if ($(this).is(':checked') && $(this).val() == 'M') {
+            $('#hideEmpSex').val('M');
+        } else {
+            $('#hideEmpSex').val('F');
+        }
+    }
+
+    FormDataCheck = function () {
+        if ($('#textEmpName').val() == "") { $.notify("員工姓名不得空白"); $('#textEmpName').focus(); return false; }
+        if ($('#textEmpMobile').val() == "") { $.notify("行動電話不得空白"); $('#textEmpMobile').focus(); return false; }
+        if ($('#textEmpEmail').val() == "") { $.notify("電子郵件不得空白"); $('#textEmpEmail').focus(); return false; }
+        if ($('#textEmpAddress').val() == "") { $.notify("聯絡地址不得空白"); $('#textEmpAddress').focus(); return false; }
+    }
+
+</script>
+<h2>Create</h2>
+@using (Html.BeginForm(null, null, new { id = "form1" }))
+{
+    @Html.Hidden("hideEmpSex")
+    @ViewBag.showEmpNotation
+    <table style="width:900px" border="1" cellpadding="0" cellspacing="0">
+        <tr style="height:40px;font-weight:bold;font-size:24px"><td style="width:100%; text-align:center" colspan="4">新增員工基本資料</td></tr>
+        <tr style="height:40px;">
+            <td style="width:100px; text-align:left">員工姓名</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpName", "", new { Style = "width:80%; height:30px" }) </td>
+            <td style="width:100px; text-align:left">員工性別</td>
+            <td style="width:350px; text-align:left">@Html.RadioButton("radioEmpSex", "M", true)男 @Html.RadioButton("radioEmpSex", "F", false)女</td>
+        </tr>
+        <tr style="height:40px;">
+            <td style="width:100px; text-align:left">行動電話</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpMobile", "", new { Style = "width:80%; height:30px" }) </td>
+            <td style="width:100px; text-align:left">連絡電話</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpPhone", "", new { Style = "width:80%; height:30px" })  </td>
+        </tr>
+        <tr style="height:40px;">
+            <td style="width:100px; text-align:left">電子郵件</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpEmail", "", new { Style = "width:700px; height:30px" }) </td>
+            <td style="width:100px; text-align:left">聯絡地址</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpAddress", "", new { Style = "width:700px; height:30px" }) </td>
+        </tr>
+        <tr style="height:40px;">
+            <td style="width:100px; text-align:left">備註說明</td>
+            <td style="width:350px; text-align:left">@Html.TextArea("textEmpNotation", "", 5, 800, new { Style = "width:80%;" }) </td>
+            <td style="width:100px; text-align:left">其他說明</td>
+            <td style="width:350px; text-align:left">@Html.TextArea("textEmpRemark", "", 5, 800, new { Style = "width:80%;" }) </td>
+        </tr>
+        <tr style="height:40px">
+            <td style="width:100%; text-align:center" colspan="4">
+                <input type="submit" value="Create" id="btnFormC" />
+            </td>
+        </tr>
+    </table>
+}

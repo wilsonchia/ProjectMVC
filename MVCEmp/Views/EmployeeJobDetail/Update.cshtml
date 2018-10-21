@@ -1,0 +1,94 @@
+﻿@using MVCEmp.Models
+@model EmployeeJobDetailModels
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+
+    $(function ($) {
+        $("#textJobLeaveDate").datepicker({ dateFormat: 'yy/mm/dd' });
+        $('#selJobClass').change(funcSelectClassChangeHide);
+        $('#checkJobStatus').click(function () {
+            if (this.checked == true) {
+                $('#hideJobStatus').val("O");
+            } else {
+                $('#hideJobStatus').val("X");
+            }
+        });
+        $('#btnForm').click(funcFormDataConfirm);
+    });
+
+    funcSelectClassChangeHide = function () {
+        var valSelClass = $('#selJobClass :selected').val();
+        $('#hideJobClass').val(valSelClass);
+    }
+
+    funcFormDataConfirm = function () {
+        if ($('#selJobClass :selected').val() == "") {
+            $('#showMess').notify("請務必選擇類別!!"); $('#selJobClass').focus(); return false;
+        } else { $('#hideJobClass').val($('#selJobClass :selected').val()); }
+        if ($('#textJobLeaveDate').val() == "") {
+            $('#showMess').notify("請務必選擇日期!!"); $('#textJobLeaveDate').focus(); return false;
+        } else {
+            $('#hideJobLeaveDate').val($('#textJobLeaveDate').val());
+        }
+        $('#form1').submit();
+    }
+
+</script>
+<h2>Update</h2>
+@using (Html.BeginForm("Update", "EmployeeJobDetail", FormMethod.Post, new { id = "form1" }))
+{
+    @Html.Hidden("hideEmpIndex", (string)ViewBag.valEmpIndex)
+    @Html.Hidden("hideDeptIndex", (string)@ViewBag.valDeptIndex)
+    @Html.Hidden("hideJobIndex", (string)@ViewBag.valJobIndex)
+    @Html.Hidden("hideJobClass", (string)@ViewBag.valJobClass)
+    @Html.Hidden("hideJobStatus", (string)@ViewBag.valJobStatus)
+    @Html.Hidden("hideJobJoinDate", (string)@ViewBag.valJobJoinDate)
+    @Html.Hidden("hideJobDateTime", (string)@ViewBag.valJoinDateTime)
+    @Html.Hidden("hideJobLeaveDate", (string)@ViewBag.valJobLeaveDate)
+    <table style="width:800px; text-align:center; font-size:15px;font-weight:bold" border="0" cellpadding="0" cellspacing="0">
+        <tr style="height:40px;font-weight:bold;font-size:24px"><td style="width:100%; text-align:center" colspan="4">修改員工職務</td></tr>
+        <tr style="height:35px">
+            <td style="width:100px; text-align:left">員工編號</td>
+            <td style="width:300px; text-align:left">@ViewBag.valEmpIndex</td>
+            <td style="width:100px; text-align:left">員工姓名</td>
+            <td style="width:300px; text-align:left">@ViewBag.valEmpName</td>
+        </tr>
+        <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
+        <tr style="height:35px">
+            <td style="width:100px; text-align:left">所屬部門</td>
+            <td style="width:300px; text-align:left">@ViewBag.valDeptTitle</td>
+            <td style="width:100px; text-align:left">所屬職位</td>
+            <td style="width:300px; text-align:left">@ViewBag.valJobTitle</td>
+        </tr>
+        <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
+        <tr style="height:35px">
+            <td style="width:100px; text-align:left">類別</td>
+            <td style="width:300px; text-align:left">@Html.DropDownList("selJobClass", (IEnumerable<SelectListItem>)ViewBag.selJobClass, new { Style = "width:90%;height:35px" })</td>
+            <td style="width:100px; text-align:left">在職狀態</td>
+            <td style="width:300px; text-align:left">@Html.CheckBox("checkJobStatus", (ViewBag.valJobStatus == "O") ? true : false)仍在職</td>
+        </tr>
+        <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
+        <tr style="height:35px">
+            <td style="width:100px; text-align:left">備註說明</td>
+            <td style="width:300px; text-align:left">@Html.TextArea("textJobNotation", (string)ViewBag.valJobNotation, 10, 250, new { Style = "width:100%;" })</td>
+            <td style="width:100px; text-align:left">附註說明</td>
+            <td style="width:300px; text-align:left">@Html.TextArea("textJobRemark", (string)ViewBag.valJobRemark, 10, 250, new { Style = "width:100%;" })</td>
+        </tr>
+        <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
+        <tr style="height:35px">
+            <td style="width:100px; text-align:left">離職日期</td>
+            <td style="width:300px; text-align:left">@Html.TextBox("textJobLeaveDate", (string)ViewBag.valJobLeaveDate, new { Style = "width:90%; height:35px" })</td>
+            <td style="width:400px" colspan="2"><span id="showMess"></span></td>
+        </tr>
+        <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
+        <tr style="height:35px">
+            <td style="width:100%; text-align:center" colspan="4">
+                <input type="submit" id="btnForm" value="Update" />
+            </td>
+        </tr>
+    </table>
+
+}
