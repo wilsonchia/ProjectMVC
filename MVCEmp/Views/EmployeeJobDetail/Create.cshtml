@@ -4,7 +4,7 @@
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Create</h2>
+
 <script type="text/javascript">
 
     $(function ($) {
@@ -65,38 +65,41 @@
     @Html.Hidden("hideJobJoinDate", "")
     @Html.Hidden("hideJobDateTime", (string)ViewBag.valNowDateTime)
 
-    <table style="width:800px; text-align:center; font-size:15px;font-weight:bold" border="0" cellpadding="0" cellspacing="0">
-        <tr style="height:40px;font-weight:bold;font-size:24px"><td style="width:100%; text-align:center" colspan="4">新增員工職務</td></tr>
+    <table style="width:900px; text-align:center; font-size:15px;font-weight:bold" border="0" cellpadding="0" cellspacing="0">
+        <tr style="height:40px;font-weight:bold;font-size:24px"><td style="width:100%; text-align:center" colspan="4">新增員工職務<hr /></td></tr>
         <tr style="height:35px">
             <td style="width:100px; text-align:left">員工選單</td>
-            <td style="width:300px; text-align:left">@Html.DropDownList("selEmpIndex", (IEnumerable<SelectListItem>)ViewBag.selEmpData, new { Style = "width:90%;height:35px" })</td>
+            <td style="width:350px; text-align:left">@Html.DropDownList("selEmpIndex", (IEnumerable<SelectListItem>)ViewBag.selEmpData, new { Style = "width:60%;height:35px" })</td>
             <td style="width:100px; text-align:left">類別</td>
-            <td style="width:300px; text-align:left">@Html.DropDownList("selJobClass", (IEnumerable<SelectListItem>)ViewBag.selJobClass, new { Style = "width:90%;height:35px" })</td>
+            <td style="width:350px; text-align:left">@Html.DropDownList("selJobClass", (IEnumerable<SelectListItem>)ViewBag.selJobClass, new { Style = "width:60%;height:35px" })</td>
         </tr>
         <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
         <tr style="height:35px">
             <td style="width:100px; text-align:left">所屬部門</td>
-            <td style="width:300px; text-align:left">@Html.DropDownList("selDeptIndex", (IEnumerable<SelectListItem>)ViewBag.selDeptIndex, new { style = "width:90%; height:35px" })</td>
+            <td style="width:350px; text-align:left">@Html.DropDownList("selDeptIndex", (IEnumerable<SelectListItem>)ViewBag.selDeptIndex, new { style = "width:60%; height:35px" })</td>
             <td style="width:100px; text-align:left">所屬職位</td>
-            <td style="width:300px; text-align:left">@Html.DropDownList("selJobIndex", (IEnumerable<SelectListItem>)ViewBag.selJobIndex, new { Style = "width:90%; height:35px" })</td>
+            <td style="width:350px; text-align:left">@Html.DropDownList("selJobIndex", (IEnumerable<SelectListItem>)ViewBag.selJobIndex, new { Style = "width:60%; height:35px" })</td>
         </tr>
         <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
         <tr style="height:35px">
             <td style="width:100px; text-align:left">備註說明</td>
-            <td style="width:300px; text-align:left">@Html.TextArea("textJobNotation", "", 10, 250, new { Style = "width:100%;" })</td>
-            <td style="width:100px; text-align:left">附註說明</td>
-            <td style="width:300px; text-align:left">@Html.TextArea("textJobRemark", "", 10, 250, new { Style = "width:100%;" })</td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextArea("textJobNotation", "", 5, 200, new { Style = "width:95%;" })</td>
         </tr>
         <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
         <tr style="height:35px">
-            <td style="width:100px; text-align:left">新增日期</td>
-            <td style="width:300px; text-align:left">@Html.TextBox("textJobJoinDate", "", new { Style = "width:90%;height:35px" })</td>
-            <td style="width:400px" colspan="2"><span id="showMess"></span></td>
+            <td style="width:100px; text-align:left">附註說明</td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextArea("textJobRemark", "", 5, 200, new { Style = "width:95%;" })</td>
+        </tr>
+        <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
+        <tr style="height:35px">
+            <td style="width:100px; text-align:left">到職日期</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textJobJoinDate", "", new { Style = "width:60%; height:35px" })</td>
+            <td style="width:450px" colspan="2"><span id="showMess"></span></td>
         </tr>
         <tr><td style="width:100%;" colspan="4"><hr /></td></tr>
         <tr style="height:35px">
             <td style="width:100%; text-align:center" colspan="4">
-                <input type="submit" id="btnForm" value="Create" />
+                <input type="submit" value="新增員工工作職位" id="btnForm" style="height:35px; width:200px; font-size:17px; font-weight:bold" />
             </td>
         </tr>
     </table>

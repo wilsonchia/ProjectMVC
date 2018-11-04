@@ -7,9 +7,13 @@
 <h2>Update</h2>
 <script type="text/javascript">
 
+    var baseUrl = '@Html.Raw(Url.Content("~"))';
+    if (baseUrl == '/') { baseUrl = ''; }
+
     $(function ($) {
         $('input:radio[name="radioEmpSex"]').change(FormRadioChecked);
         $('input:checkbox[name="checkEmpStatus"]').change(FormCheckBoxChecked);
+        $('#textEmpLeaveDate').datepicker({ dateFormat: "yy/mm/dd" });
         $('#btnForm').click(FormDataCheck);
     });
 
@@ -22,20 +26,32 @@
     FormCheckBoxChecked = function () {
         if ($(this).is(':checked')) {
             $('#hideEmpStatus').val('O');
+            $('#textEmpLeaveDate').val("");
         } else {
             $('#hideEmpStatus').val('X');
             if ($('#textEmpLeaveDate').val() == "") {
-                $.notify("在職狀態已被取消!!請務必填寫離職日期!!");
+                $('#showMess').notify("在職狀態已被取消!!請務必填寫離職日期!!");
                 $('#textEmpLeaveDate').focus();
             }
         }
     }
 
     FormDataCheck = function () {
-        if ($('#textEmpName').val() == "") { $.notify('員工姓名不得空白'); $('#textEmpName').focus(); return false; }
-        if ($('#textEmpMobile').val() == "") { $.notify('行動電話不得空白'); $('#textEmpMobile').focus(); return false; }
-        if ($('#textEmpEmail').val() == "") { $.notify('電子郵件不得空白'); $('#textEmpEmail').focus(); return false; }
-        if ($('#textEmpAddress').val() == "") { $.notify('聯絡地址不得空白'); $('#textEmpAddress').focus(); return false; }
+        if ($('#textEmpName').val() == "") { $('#showMess').notify('員工姓名不得空白'); $('#textEmpName').focus(); return false; }
+        if ($('#textEmpMobile').val() == "") { $('#showMess').notify('行動電話不得空白'); $('#textEmpMobile').focus(); return false; }
+        if ($('#textEmpEmail').val() == "") { $('#showMess').notify('電子郵件不得空白'); $('#textEmpEmail').focus(); return false; }
+        if ($('#textEmpAddress').val() == "") { $('#showMess').notify('聯絡地址不得空白'); $('#textEmpAddress').focus(); return false; }
+        if ($('input:checkbox[name="checkEmpStatus"]').is(':checked')) {
+            $('#hideEmpSex').val('M');
+            $('#textEmpLeaveDate').val("");
+        } else {
+            $('#hideEmpSex').val('F');
+            if ($('#textEmpLeaveDate').val() == "") {
+                $('#showMess').notify("在職狀態已被取消!!請務必填寫離職日期!!");
+                $('#textEmpLeaveDate').focus();
+                return false;
+            }
+        }
     }
 
 
@@ -44,48 +60,63 @@
 {
 
     @Html.Hidden("hideEmpIndex", (string)ViewBag.valEmpIndex)
+    @Html.Hidden("hideEmpID", (string)ViewBag.valEmpID)
     @Html.Hidden("hideEmpSex", (string)ViewBag.valEmpSex)
     @Html.Hidden("hideEmpStatus", (string)ViewBag.valEmpStatus)
     @Html.Hidden("hideEmpJoinDate", (string)ViewBag.valEmpJoinDate)
     @ViewBag.showEmpNotation
-    <table style="width:900px" border="1" cellpadding="0" cellspacing="0">
+    <table style="width:900px" border="0" cellpadding="0" cellspacing="0">
         <tr style="height:40px;font-weight:bold;font-size:24px"><td style="width:100%; text-align:center" colspan="4">修改員工基本資料</td></tr>
         <tr style="height:40px;">
             <td style="width:100px; text-align:left">員工姓名</td>
             <td style="width:350px; text-align:left">@Html.TextBox("textEmpName", (string)ViewBag.valEmpName, new { Style = "width:80%; height:30px" }) </td>
-            <td style="width:100px; text-align:left">員工性別</td>
+            <td style="width:100px; text-align:left">身分證號</td>
+            <td style="width:350px; text-align:left">@ViewBag.valEmpID</td>
+        </tr>
+        <tr><td colspan="4"><hr /></td></tr>
+        <tr style="height:40px;">
+            <td style="width:100px; text-align:left;font-weight:bold">員工性別</td>
             <td style="width:350px; text-align:left">
                 @Html.RadioButton("radioEmpSex", "M", ((string)ViewBag.valEmpSex == "M") ? true : false)男
-                @Html.RadioButton("radioEmpSex", "F", ((string)ViewBag.valEmpSex == "F") ? true : false)女
+                @Html.RadioButton("radioEmpSex", "F", ((string)ViewBag.valEmpSex == "F") ? true : false)女                
+            </td>
+            <td style="width:100px; text-align:left;font-weight:bold">在職狀態<br />離職日期</td>
+            <td style="width:350px; text-align:left">
+                @Html.CheckBox("checkEmpStatus", ((string)ViewBag.valEmpStatus == "O") ? true : false)仍在職 到職日期: @ViewBag.valEmpJoinDate<br />
+                @Html.TextBox("textEmpLeaveDate", (string)ViewBag.valEmpLeaveDate, new { Style = "width:80%; height:25px" })                
             </td>
         </tr>
+        <tr><td colspan="4"><hr /></td></tr>
         <tr style="height:40px;">
             <td style="width:100px; text-align:left">行動電話</td>
             <td style="width:350px; text-align:left">@Html.TextBox("textEmpMobile", (string)ViewBag.valEmpMobile, new { Style = "width:80%; height:30px" }) </td>
             <td style="width:100px; text-align:left">連絡電話</td>
             <td style="width:350px; text-align:left">@Html.TextBox("textEmpPhone", (string)ViewBag.valEmpPhone, new { Style = "width:80%; height:30px" })  </td>
         </tr>
+        <tr><td colspan="4"><hr /></td></tr>
         <tr style="height:40px;">
             <td style="width:100px; text-align:left">電子郵件</td>
-            <td style="width:350px; text-align:left">@Html.TextBox("textEmpEmail", (string)ViewBag.valEmpEmail, new { Style = "width:700px; height:30px" }) </td>
-            <td style="width:100px; text-align:left">聯絡地址</td>
-            <td style="width:350px; text-align:left">@Html.TextBox("textEmpAddress", (string)ViewBag.valEmpAddress, new { Style = "width:700px; height:30px" }) </td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextBox("textEmpEmail", (string)ViewBag.valEmpEmail, new { Style = "width:95%; height:30px" }) </td>
         </tr>
+        <tr><td colspan="4"><hr /></td></tr>
+        <tr style="height:40px;">
+            <td style="width:100px; text-align:left">聯絡地址</td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextBox("textEmpAddress", (string)ViewBag.valEmpAddress, new { Style = "width:95%; height:30px" }) </td>
+        </tr>
+        <tr><td colspan="4"><hr /></td></tr>
         <tr style="height:40px;">
             <td style="width:100px; text-align:left">備註說明</td>
-            <td style="width:350px; text-align:left">@Html.TextArea("textEmpNotation", (string)ViewBag.valEmpNotation, 5, 800, new { Style = "width:80%;" }) </td>
-            <td style="width:100px; text-align:left">其他說明</td>
-            <td style="width:350px; text-align:left">@Html.TextArea("textEmpRemark", (string)ViewBag.valEmpRemark, 5, 800, new { Style = "width:80%;" }) </td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextArea("textEmpNotation", (string)ViewBag.valEmpNotation, 5, 800, new { Style = "width:95%;" }) </td>
         </tr>
+        <tr><td colspan="4"><hr /></td></tr>
         <tr style="height:40px;">
-            <td style="width:100px; text-align:left">在職狀態<br />在職日期</td>
-            <td style="width:350px; text-align:left">@Html.CheckBox("checkEmpStatus", ((string)ViewBag.valEmpStatus == "O") ? true : false)仍在職<br />@ViewBag.valEmpJoinDate</td>
-            <td style="width:100px; text-align:left">離職日期</td>
-            <td style="width:350px; text-align:left">@Html.TextBox("textEmpLeaveDate", (string)ViewBag.valEmpLeaveDate, new { Style = "width:80%; height:30px" }) </td>
+            <td style="width:100px; text-align:left">其他說明</td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextArea("textEmpRemark", (string)ViewBag.valEmpRemark, 5, 800, new { Style = "width:95%;" }) </td>
         </tr>
+        <tr><td colspan="4"><hr /><span id="showMess" /></td></tr>
         <tr style="height:40px">
             <td style="width:100%; text-align:center" colspan="4">
-                <input type="submit" value="Update" id="btnForm" />
+                <input type="submit" value="修改員工基本資料" id="btnForm" style="height:35px; width:200px; font-size:17px; font-weight:bold" />
             </td>
         </tr>
     </table>

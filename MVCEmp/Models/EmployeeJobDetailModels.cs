@@ -46,50 +46,43 @@ namespace MVCEmp.Models
         public List<SelectListItem> selJoinMM { get; set; }
         public List<SelectListItem> selJoinDD { get; set; }
         public List<SelectListItem> selEmpData { get; set; }
+        
 
         public DataTable reDataTable()
         {
             DataTable returnDT = new DataTable();
-            funcQuerySQL = "select * from EmployeeJobDetail ";
+            funcQuerySQL = string.Format(@"select  ej.*,ed.EmpName,sa.SystemTitle as DeptTitle,sb.SystemTitle as JobTitle
+                           ,sc.SystemTitle as JobClassTitle from EmployeeJobDetail ej
+                           inner join EmployeeDetail ed on ed.EmpIndex = ej.EmpIndex
+                           inner join SystemDetail sa on sa.SystemClass='DeptIndex' and sa.SystemValue=ej.DeptIndex
+                           inner join SystemDetail sb on sb.SystemClass='JobIndex' and sb.SystemValue=ej.JobIndex
+                           inner join SystemDetail sc on sc.SystemClass='Jobclass' and sc.SystemValue=ej.JobClass");
             returnDT = dbClass.getDataTableToDataBase(funcQuerySQL, null);
             return returnDT;
         }
 
         public List<listEmployeeJobDetail> reListEmployeeJobDetail()
         {
-            List<listEmployeeJobDetail> list = new List<listEmployeeJobDetail>();
-            DataTable returnDT = reDataTable();
-            DataTable rtnDTS = sdModel.ReDataTable();
-            DataTable rtnDTE = edModel.ReDataTable();
-            list = (from ej in returnDT.AsEnumerable()
-                    join ed in rtnDTE.AsEnumerable()
-                        on ej.Field<string>("EmpIndex") equals ed.Field<string>("EmpIndex")
-                    join sa in rtnDTS.AsEnumerable()
-                        on ej.Field<string>("DeptIndex") equals sa.Field<string>("SystemValue")
-                    join sb in rtnDTS.AsEnumerable()
-                        on ej.Field<string>("JobIndex") equals sb.Field<string>("SystemValue")
-                    join sc in rtnDTS.AsEnumerable()
-                        on ej.Field<string>("JobClass") equals sc.Field<string>("SystemValue")
-                    where sa.Field<string>("SystemClass") == "DeptIndex"
-                    && sb.Field<string>("SystemClass") == "JobIndex"
-                    && sc.Field<string>("SystemClass") == "JobClass"
-                    select new listEmployeeJobDetail
-                    {
-                        lEmpIndex = ej.Field<string>("EmpIndex"),
-                        lDeptIndex = ej.Field<string>("DeptIndex"),
-                        lJobIndex = ej.Field<string>("JobIndex"),
-                        lJobDateTime = ej.Field<string>("JobDateTime"),
-                        lJobClass = ej.Field<string>("JobClass"),
-                        lJobNotation = ej.Field<string>("JobNotation"),
-                        lJobRemark = ej.Field<string>("JobRemark"),
-                        lJobStatus = ej.Field<string>("JobStatus"),
-                        lJobJoinDate = ej.Field<string>("JobJoinDate"),
-                        lJobLeaveDate = ej.Field<string>("JobLeaveDate"),
-                        lEmpName = ed.Field<string>("EmpName"),
-                        lDeptTitle = sa.Field<string>("SystemTitle"),
-                        lJobTitle = sb.Field<string>("SystemTitle"),
-                        lJobClassTitle = sc.Field<string>("SystemTitle")
-                    }).ToList();
+            List<listEmployeeJobDetail> list = new List<listEmployeeJobDetail>();            
+            DataTable rtnDTJ = new DataTable(); rtnDTJ = reDataTable();
+            list = ( from ej in rtnDTJ.AsEnumerable() 
+                     select new listEmployeeJobDetail {
+                       lEmpIndex = ej.Field<string>("EmpIndex"),
+                       lDeptIndex = ej.Field<string>("DeptIndex"),
+                       lJobIndex = ej.Field<string>("JobIndex"),
+                       lJobDateTime = ej.Field<string>("JobDateTime"),
+                       lJobClass = ej.Field<string>("JobClass"),
+                       lJobNotation = ej.Field<string>("JobNotation"),
+                       lJobRemark = ej.Field<string>("JobRemark"),
+                       lJobStatus = ej.Field<string>("JobStatus"),
+                       lJobJoinDate = ej.Field<string>("JobJoinDate"),
+                       lJobLeaveDate = ej.Field<string>("JobLeaveDate"),
+                       lDeptTitle = ej.Field<string>("DeptTitle"),
+                       lJobTitle = ej.Field<string>("JobTitle"),
+                       lEmpName = ej.Field<string>("EmpName"),
+                       lJobClassTitle = ej.Field<string>("JobClassTitle")
+                     }                
+                    ).ToList();            
             return list;
         }
 

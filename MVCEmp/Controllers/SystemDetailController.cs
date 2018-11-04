@@ -235,5 +235,19 @@ namespace MVCEmp.Controllers
             return PartialView("List", viewModel);
         }
 
+        [HttpPost]
+        public string rtnSystemData(string fClass, string fValue)
+        {
+            string RtnValue = "";
+            List<listSystemDetail> listSysData = new List<listSystemDetail>();
+            listSysData = sdModels.reListSystemDetail().Where(x => x.lSystemClass == fClass && x.lSystemNotation == fValue).ToList();
+            if (listSysData.Count > 0) {                
+                for (int i = 0; i < listSysData.Count; i++) {
+                    RtnValue += string.Format(@"{0}/{1}{2}", listSysData[i].lSystemValue.ToString(), listSysData[i].lSystemTitle.ToString(), (i < listSysData.Count() - 1) ? "_" : "");
+                }
+            }
+            return RtnValue;
+        }
+
     }
 }

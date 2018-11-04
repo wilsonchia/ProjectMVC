@@ -5,18 +5,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2><br /></h2>
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form1" }))
 {
-    <table style="width:900px; text-align:center" border="1" cellpadding="0" cellspacing="0">
+    <table style="width:900px; text-align:center" border="0" cellpadding="0" cellspacing="0">
         <tr style="height:35px; color:black">
-            <td style="width:100%; text-align:left">
-                查詢條件 : @Html.TextBox("searchValue", (string)ViewBag.searchValue, new { Style = "width:800px;height:35px" })
-                @Html.ActionLink("新增員工職務", "Create", "EmployeeJobDetail")
+            <td style="width:700px; text-align:left">
+                查詢條件 : @Html.TextBox("searchValue", (string)ViewBag.searchValue, new { Style = "width:550px;height:35px" })                
                 <input type="submit" id="btnsubmit" value="查詢" style="width:50px; height:35px" />
             </td>
+            <td style="width:200px; text-align:right">@Html.ActionLink("新增員工工作職務", "Create", "EmployeeJobDetail", new { Style = "height:35px; font-size:16px" })</td>
         </tr>
-        <tr><td style="width:100%">@{Html.RenderPartial("List", Model);}</td></tr>
+        <tr><td style="width:100%" colspan="2"><hr />@{Html.RenderPartial("List", Model);}</td></tr>
     </table>
 
 }

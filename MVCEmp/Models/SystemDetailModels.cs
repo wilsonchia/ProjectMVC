@@ -33,7 +33,7 @@ namespace MVCEmp.Models
         public DataTable ReDataTable()
         {
             DataTable returnDT = new DataTable(); string funQuerySQL = "";
-            funQuerySQL = "select * from SystemDetail where 1=1 ";
+            funQuerySQL = "select * from SystemDetail where 1=1 and SystemValue<>'defvalue' ";
             returnDT = dbClass.getDataTableToDataBase(funQuerySQL, null);
             return returnDT;
         }
@@ -117,23 +117,26 @@ namespace MVCEmp.Models
             return funExecuteValue;
         }
 
-        public List<SelectListItem> rtnSysDataList(string funSystemClass, string funNullTitle, string funSystemValue)
+        public List<SelectListItem> rtnSysDataList(string funSystemClass, string funNullTitle)
         {
             List<SelectListItem> list = new List<SelectListItem>();
-            List<listSystemDetail> sdList = new List<listSystemDetail>();
+            List<listSystemDetail> sdList = new List<listSystemDetail>();            
             sdList = reListSystemDetail();
-            if (sdList.Where(x => x.lSystemClass == funSystemClass).Count() > 0)
+            list.Add(new SelectListItem { Value = "", Text = funNullTitle });
+            if (funSystemClass != "")
             {
-                sdList = sdList.Where(x => x.lSystemClass == funSystemClass).ToList();
-                list.Add(new SelectListItem { Value = "", Text = funNullTitle });
-                for (int i = 0; i < sdList.Count; i++)
+                if (sdList.Where(x => x.lSystemClass == funSystemClass).Count() > 0)
                 {
-                    list.Add(new SelectListItem { Value = sdList[i].lSystemValue.ToString(), Text = sdList[i].lSystemTitle.ToString(), Selected = (sdList[i].lSystemValue.ToString() == funSystemValue) });
-                }
-            }
-            return list;
-        }
+                    sdList = sdList.Where(x => x.lSystemClass == funSystemClass).ToList();
 
+                    for (int i = 0; i < sdList.Count; i++)
+                    {
+                        list.Add(new SelectListItem { Value = sdList[i].lSystemValue.ToString(), Text = sdList[i].lSystemTitle.ToString() });
+                    }
+                }
+            }            
+            return list;
+        }        
 
     }
 

@@ -24,12 +24,19 @@ namespace MVCEmp.Models
         public string showEmpStatus { get; set; }     public string valEmpStatus { get; set; }
         public string showEmpJoinDate { get; set; }   public string valEmpJoinDate { get; set; }
         public string showEmpLeaveDate { get; set; }  public string valEmpLeaveDate { get; set; }
+        public string valEmpID { get; set; }          public string valEmpPassword { get; set; }
+        public string showEmpID { get; set; }         public string showEmpPassword { get; set; }
         public string searchValue { get; set; }
         public string valSumDataCount { get; set; }
         public string valSumPageCount { get; set; }
         public string valPageDataCount { get; set; }
         public string valPageIndex { get; set; }
-        public List<string> listEmployeeColumn = new List<string>() { "EmpIndex", "EmpName", "EmpSex", "EmpEmail", "EmpAddress", "EmpMobile", "EmpPhone", "EmpNotation", "EmpRemark", "EmpStatus", "EmpJoinDate", "EmpLeaveDate" };
+        public List<SelectListItem> selAreaCity { get; set; }
+        public List<SelectListItem> selAreaZip { get; set; }
+        public List<string> listEmployeeColumn = new List<string>() { 
+            "EmpIndex", "EmpID", "EmpName", "EmpSex", "EmpEmail",
+            "EmpAddress", "EmpMobile", "EmpPhone", "EmpNotation", "EmpRemark",
+            "EmpStatus", "EmpJoinDate", "EmpLeaveDate", "EmpPassword" };
 
         App_Start.ClassDataBase classDB = new App_Start.ClassDataBase();
 
@@ -51,6 +58,7 @@ namespace MVCEmp.Models
                 {
                     listEmployeeDetail item = new listEmployeeDetail();
                     item.lEmpIndex = dr["EmpIndex"].ToString();
+                    item.lEmpID = dr["EmpID"].ToString();
                     item.lEmpName = dr["EmpName"].ToString();
                     item.lEmpSex = dr["EmpSex"].ToString();
                     item.lEmpEmail = dr["EmpEmail"].ToString();
@@ -62,6 +70,7 @@ namespace MVCEmp.Models
                     item.lEmpStatus = dr["EmpStatus"].ToString();
                     item.lEmpJoinDate = dr["EmpJoinDate"].ToString();
                     item.lEmpLeaveDate = dr["EmpLeaveDate"].ToString();
+                    item.lEmpPassword = dr["EmpPassword"].ToString();
                     returnListDetail.Add(item);
                 }
             }
@@ -87,8 +96,8 @@ namespace MVCEmp.Models
                 }
                 funcExecuteSQL += string.Format(@")");
                 ReturnValue = classDB.execValueToDataBase(funcExecuteSQL, null);
-            }
-            //ReturnValue = funcExecuteSQL;
+                //ReturnValue = funcExecuteSQL;
+            }            
             return ReturnValue;
         }
 
@@ -99,10 +108,12 @@ namespace MVCEmp.Models
             if (classDB.checkValueToDataBase(funcQuerySQL, null) == "O")
             {
                 funcExecuteSQL = string.Format(@" Update EmployeeDetail Set ");
-                for (int i = 1; i < SendDataList.Count; i++) { funcExecuteSQL += string.Format(@" {0}='{1}'{2} ", listEmployeeColumn[i].ToString(), SendDataList[i].ToString(), (i < SendDataList.Count - 1) ? "," : ""); }
-                funcExecuteSQL += string.Format(@" Where EmpIndex='{0}'", SendDataList[0].ToString());
+                for (int i = 2; i < SendDataList.Count; i++) { funcExecuteSQL += string.Format(@" {0}='{1}'{2} ", listEmployeeColumn[i].ToString(), SendDataList[i].ToString(), (i < SendDataList.Count - 1) ? "," : ""); }
+                funcExecuteSQL += string.Format(@" Where EmpIndex='{0}' and EmpID='{1}'", SendDataList[0].ToString(), SendDataList[1].ToString());
                 ReturnValue = classDB.execValueToDataBase(funcExecuteSQL, null);
+                //ReturnValue = funcExecuteSQL;
             }
+            ReturnValue = funcExecuteSQL;
             return ReturnValue;
         }
 
@@ -119,7 +130,7 @@ namespace MVCEmp.Models
             string ReturnValue = ""; DataTable reDT = new DataTable(); reDT = ReDataTable();
             if (reDT.Rows.Count > 0)
             {
-                ReturnValue = reDT.Compute("max(EmpIndex) + 1", "").ToString().PadLeft(5, '0');
+                ReturnValue = Convert.ToInt32(Convert.ToInt32(reDT.Compute("Max(EmpIndex)", "")) + 1).ToString().PadLeft(5, '0');
             }
             else { ReturnValue = "00001"; }
             return ReturnValue;
@@ -129,24 +140,25 @@ namespace MVCEmp.Models
         {
             List<SelectListItem> list = new List<SelectListItem>();
             List<listEmployeeDetail> edList = new List<listEmployeeDetail>();
-            edList = ReListEmployeeDetail();
-            edList = edList.Where(x => x.lEmpStatus == "O").ToList();
-            if (edList.Count() > 0)
-            {
-                list.Add(new SelectListItem { Value = "", Text = "請選擇員工" });
-                for (int i = 0; i < edList.Count; i++)
-                {
-                    list.Add(new SelectListItem { Value = edList[i].lEmpIndex.ToString(), Text = edList[i].lEmpName.ToString() });
+            edList = ReListEmployeeDetail().Where(x => x.lEmpStatus == "O").ToList();
+            list.Add(new SelectListItem { Value = "", Text = "請選擇員工" });
+            if (edList.Count() > 0) {                
+                for (int i = 0; i < edList.Count; i++) {
+                    list.Add(new SelectListItem { Value = edList[i].lEmpIndex.ToString(), Text = string.Format(@"({0}){1}", edList[i].lEmpIndex.ToString(), edList[i].lEmpName.ToString()) });
                 }
             }
             return list;
         }
+
+
+
 
     }
 
     public class listEmployeeDetail
     {
         public string lEmpIndex { get; set; }
+        public string lEmpID { get; set; }
         public string lEmpName { get; set; }
         public string lEmpSex { get; set; }
         public string lEmpEmail { get; set; }
@@ -158,6 +170,7 @@ namespace MVCEmp.Models
         public string lEmpStatus { get; set; }
         public string lEmpJoinDate { get; set; }
         public string lEmpLeaveDate { get; set; }
+        public string lEmpPassword { get; set; }
     }
 
 }

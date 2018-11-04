@@ -1,35 +1,21 @@
 ﻿@using MVCEmp.Models
 @model SystemDetailModels
-
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<script type="text/javascript">
-
-
-    FormDataUpload = function () { $('$form1').attr("action", "SystemDetail/Upload"); $('#form1').submit(); }
-    FormExcelOut = function () { $('#form1').attr("action", "SystemDetail/OutExcelData"); $('#form1').submit(); }
-
-</script>
-<h2>Index</h2>
 @using (Html.BeginForm("Index", "SystemDetail", FormMethod.Post, new { id = "form1", enctype = "multipart/form-data" }))
 {
     <table style="width:900px; text-align:center" border="0" cellpadding="0" cellspacing="0">
+        <tr style="height:40px;font-size:20px;font-weight:bold"><td style="width:100%; text-align:center" colspan="4">系統參數資料檔<hr /></td></tr>
         <tr style="height:35px; color:black">
-            <td style="width:400px; text-align:left">
-                查詢條件 : @Html.TextBox("searchValue", (string)ViewBag.searchValue, new { Style = "width:100px; height:35px" })
-                <input type="submit" id="btnsubmit" value="查詢" style="width:50px; height:35px" />
-                @Html.ActionLink("新增系統參數", "Create", "SystemDetail")
-            </td>
-            <td style="width:100px; text-align:right">上傳檔案 : </td>
-            <td style="width:200px; text-align:left"><input type="file" name="fileUpload" id="fileUpload" /></td>
-            <td style="width:200px; text-align:right">
-                <input type="button" id="btnUpload" value="上傳" style="width:50px; height:35px" onclick="FormDataUpload();" />
-                <input type="button" id="btnOutExcel" value="匯出範例檔" style="width:100px; height:35px" onclick="FormExcelOut();" />
-            </td>
+            <td style="width:800px; text-align:left">
+                關鍵字 : @Html.TextBox("searchValue", (string)ViewBag.searchValue, new { Style = "width:600px; height:35px" })
+                <input type="submit" id="btnsubmit" value="查詢" style="width:100px; height:30px;font-weight:bold;font-size:18px" />
+            </td>                
+            <td style="width:100px; text-align:right">@Html.ActionLink("新增系統參數", "Create", "SystemDetail", new { Style="height:35px; font-size:16px" })</td>
         </tr>
+        <tr><td style="width:100%" colspan="4"><hr /></td></tr>
         <tr><td style="width:100%" colspan="4">@{Html.RenderPartial("List", Model);}</td></tr>
     </table>
 }

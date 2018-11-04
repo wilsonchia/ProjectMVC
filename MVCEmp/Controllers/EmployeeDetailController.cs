@@ -16,6 +16,7 @@ namespace MVCEmp.Controllers
     public class EmployeeDetailController : Controller
     {
         EmployeeDetailModels edModel = new EmployeeDetailModels();
+        SystemDetailModels sdModel = new SystemDetailModels();
         App_Start.ClassDataBase dbClass = new App_Start.ClassDataBase();
 
         // GET: EmployeeDetail
@@ -62,14 +63,21 @@ namespace MVCEmp.Controllers
 
         public ActionResult Create()
         {
+            List<SelectListItem> sysSelAreaCity = new List<SelectListItem>();
+            sysSelAreaCity = sdModel.rtnSysDataList("addresscity", "請選擇城市");
+            ViewBag.selAreaCity = sysSelAreaCity;
+            List<SelectListItem> sysSelZipArea = new List<SelectListItem>();
+            sysSelZipArea = sdModel.rtnSysDataList("","請選擇區域");
+            ViewBag.selAreaZip = sysSelZipArea;
             return View();
         }
 
         [HttpPost]
-        public ActionResult Create(FormCollection form)
+        public  RedirectResult Create(FormCollection form)
         {
             List<string> listCreateData = new List<string>();
             listCreateData.Add(edModel.returnMaxEmpIndex().ToString());
+            listCreateData.Add(form["textEmpID"].ToString());
             listCreateData.Add(form["textEmpName"].ToString());
             listCreateData.Add(form["hideEmpSex"].ToString());
             listCreateData.Add(form["textEmpEmail"].ToString());
@@ -79,11 +87,10 @@ namespace MVCEmp.Controllers
             listCreateData.Add(form["textEmpNotation"].ToString());
             listCreateData.Add(form["textEmpRemark"].ToString());
             listCreateData.Add("O");
-            listCreateData.Add(DateTime.Now.ToString("yyyy/mm/dd"));
+            listCreateData.Add(form["textEmpJoinDate"].ToString());
             listCreateData.Add("");
-            string returnExecValue = edModel.DataCreate(listCreateData);
-            //ViewBag.showEmpNotation = returnExecValue;
-            //return View();
+            listCreateData.Add(form["textEmpID"].ToString().Substring(0,6));            
+            string returnExecValue = edModel.DataCreate(listCreateData);            
             return Redirect("~/EmployeeDetail/Index");
         }
 
@@ -95,6 +102,7 @@ namespace MVCEmp.Controllers
             if (empDetail.Count > 0)
             {
                 ViewBag.valEmpName = empDetail[0].lEmpName.ToString();
+                ViewBag.valEmpID = empDetail[0].lEmpID.ToString();
                 ViewBag.valEmpSex = empDetail[0].lEmpSex.ToString();
                 ViewBag.valEmpMobile = empDetail[0].lEmpMobile.ToString();
                 ViewBag.valEmpPhone = empDetail[0].lEmpPhone.ToString();
@@ -110,10 +118,11 @@ namespace MVCEmp.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(FormCollection form)
+        public RedirectResult Update(FormCollection form)
         {
             List<string> listUpdateData = new List<string>();
             listUpdateData.Add(form["hideEmpIndex"].ToString());
+            listUpdateData.Add(form["hideEmpID"].ToString());
             listUpdateData.Add(form["textEmpName"].ToString());
             listUpdateData.Add(form["hideEmpSex"].ToString());
             listUpdateData.Add(form["textEmpEmail"].ToString());
@@ -128,7 +137,7 @@ namespace MVCEmp.Controllers
             string showData = "";
             for (int i = 0; i < listUpdateData.Count; i++)
             {
-                showData += string.Format(@"{0}-", listUpdateData[i].ToString());
+                showData += string.Format(@"{0}<br>", listUpdateData[i].ToString());
             }
             string returnExecValue = edModel.DataUpdate(listUpdateData);
             return Redirect("~/EmployeeDetail/Index");
@@ -186,74 +195,6 @@ namespace MVCEmp.Controllers
             NpoiWB = null; MS.Close(); MS.Dispose();
             Response.Flush(); Response.End();
         }
-
-        //[HttpPost]
-        //public void DataUpload(HttpPostedFileBase fileUpload)
-        //{
-        //    string showDetailData = ""; DataTable dtTemp = new DataTable();
-        //    if (fileUpload != null && fileUpload.ContentLength > 0)
-        //    {
-        //        string FilePath = System.Web.HttpContext.Current.Server.MapPath("~/excel");
-        //        string FileName = fileUpload.FileName;
-        //        fileUpload.SaveAs(string.Format(@"{0}\{1}", FilePath, FileName));
-        //        dynamic hssfweb; dtTemp.Clear();
-        //        using (MemoryStream ms = new MemoryStream(dbClass.GetFile(string.Format(@"{0}\{1}", FilePath, FileName))))
-        //        {
-        //            hssfweb = WorkbookFactory.Create(ms);
-        //        }
-        //        ISheet sheet = (ISheet)hssfweb.GetSheetAt(0);
-        //        if (sheet.LastRowNum > 0)
-        //        {
-        //            IRow rowT = (IRow)sheet.GetRow(0);
-        //            for (int d = 0; d < 12; d++)
-        //            {
-        //                DataColumn col = new DataColumn(rowT.GetCell(d).ToString(), typeof(string));
-        //                dtTemp.Columns.Add(col);
-        //            }
-        //            for (int i = 1; i <= sheet.LastRowNum; i++)
-        //            {
-        //                IRow rowD = (IRow)sheet.GetRow(i);
-        //                if (rowD != null)
-        //                {
-        //                    DataRow tempRow = dtTemp.NewRow();
-        //                    for (int a = 0; a < 12; a++)
-        //                    {
-        //                        //Response.Write(rowD.GetCell(a).ToString() + "<br>");
-        //                        tempRow[a] = (rowD.GetCell(a) != null) ? rowD.GetCell(a).ToString() : "";
-        //                    }
-        //                    dtTemp.Rows.Add(tempRow);
-        //                }
-        //            }
-        //        }
-        //        Response.Write(dtTemp.Rows.Count.ToString() + dtTemp.Columns.Count.ToString());
-        //        //List<listEmployeeDetail> listEmpDetail = new List<listEmployeeDetail>();
-        //        //listEmpDetail = edModel.ReListEmployeeDetail();
-        //        //if (dtTemp.Rows.Count > 0)
-        //        //{
-        //        //    foreach (DataRow dr in dtTemp.Rows)
-        //        //    {
-        //        //        List<string> execDataList = new List<string>();
-        //        //        execDataList.Add(dr["EmpIndex"].ToString());
-        //        //        execDataList.Add(dr["EmpName"].ToString());
-        //        //        execDataList.Add(dr["EmpSex"].ToString());
-        //        //        execDataList.Add(dr["EmpEmail"].ToString());
-        //        //        execDataList.Add(dr["EmpAddress"].ToString());
-        //        //        execDataList.Add(dr["EmpMobile"].ToString());
-        //        //        execDataList.Add(dr["EmpPhone"].ToString());
-        //        //        execDataList.Add(dr["EmpNotation"].ToString());
-        //        //        execDataList.Add(dr["EmpRemark"].ToString());
-        //        //        execDataList.Add(dr["EmpStatus"].ToString());
-        //        //        execDataList.Add(dr["EmpJoinDate"].ToString());
-        //        //        execDataList.Add(dr["EmpLeaveDate"].ToString());
-        //        //        if (listEmpDetail.Where(x =>x.lEmpIndex == dr["EmpIndex"].ToString()).Count() == 0) {
-        //        //            edModel.DataCreate(execDataList);
-        //        //        } else {
-        //        //            edModel.DataUpdate(execDataList);
-        //        //        }
-        //        //    }                    
-        //        //}
-        //    }
-        //}
-
+        
     }
 }

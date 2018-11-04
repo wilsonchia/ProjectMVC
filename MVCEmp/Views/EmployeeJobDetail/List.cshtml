@@ -19,10 +19,36 @@
 @Html.Hidden("hideRowPage", (string)ViewBag.valPageDataCount)
 @Html.Hidden("hidePageCount", (string)ViewBag.valSumPageCount)
 @Html.Hidden("hidePageIndex", (string)ViewBag.valPageIndex)
-
+@{  int DataIndexTop = 0;
+  if (Convert.ToInt32(ViewBag.valPageIndex) > 1) { DataIndexTop = Convert.ToInt32(Convert.ToInt32(ViewBag.valPageDataCount) * Convert.ToInt32(Convert.ToInt32(ViewBag.valPageIndex) - 1)); }
+  int DataIndexDown = 0;
+  if (Convert.ToInt32(ViewBag.valPageIndex) == 1)
+  {
+      if (Convert.ToInt32(ViewBag.valSumDataCount) < Convert.ToInt32(ViewBag.valPageDataCount))
+      {
+          DataIndexDown = Convert.ToInt32(ViewBag.valSumDataCount);
+      }
+      else
+      {
+          DataIndexDown = Convert.ToInt32(ViewBag.valPageDataCount);
+      }
+  }
+  else
+  {
+      if (Convert.ToInt32(Convert.ToInt32(ViewBag.valPageDataCount) * Convert.ToInt32(ViewBag.valPageIndex)) > Convert.ToInt32(ViewBag.valSumDataCount))
+      {
+          DataIndexDown = Convert.ToInt32(ViewBag.valSumDataCount);
+      }
+      else
+      {
+          DataIndexDown = Convert.ToInt32(Convert.ToInt32(ViewBag.valPageDataCount) * Convert.ToInt32(ViewBag.valPageIndex));
+      }
+  }
+}
 <table style="width:100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
-        <td style="width:100%" colspan="12">
+        <td style="width:100%" colspan="10">
+            頁數: @ViewBag.valPageIndex 頁 / @ViewBag.valSumPageCount 頁
             <input type="submit" id="PageFirstB" value="第一頁" style="width:70px; height:35px" @if (Convert.ToInt32(ViewBag.valPageIndex) == 1) { @Html.Raw("disabled")      ; } else { @Html.Raw("")      ; @Html.Raw(" onclick='FormPageFirst()'")      ; } />
             <input type="submit" id="PagePrevB" value="上一頁" style="width:70px; height:35px" @if (Convert.ToInt32(ViewBag.valPageIndex) == 1) { @Html.Raw("disabled")      ; } else { @Html.Raw("")      ; @Html.Raw(" onclick='FormPagePrev()'")      ; } />
             <select id="PageSelectB" style="width:70px; height:35px" onchange="FormPageSelect(this.value);">
@@ -33,80 +59,36 @@
             </select>
             <input type="submit" id="PageNextB" value="下一頁" style="width:70px; height:35px" @if (Convert.ToInt32(ViewBag.valPageIndex) == Convert.ToInt32(ViewBag.valSumPageCount)) { @Html.Raw("disabled")      ; } else { @Html.Raw("")      ; @Html.Raw(" onclick='FormPageNext()'")       ; } />
             <input type="submit" id="PageFinalB" value="最末頁" style="width:70px; height:35px" @if (Convert.ToInt32(ViewBag.valPageIndex) == Convert.ToInt32(ViewBag.valSumPageCount)) { @Html.Raw("disabled")      ; } else { @Html.Raw("")      ; @Html.Raw(" onclick='FormPageFinal()'")      ; } />
+            資料數: 共 @ViewBag.valSumDataCount 筆 / 每頁 @ViewBag.valPageDataCount 筆  / @DataIndexTop ~ @DataIndexDown
         </td>
     </tr>
-    <tr><td style="width:100%" colspan="12"><hr /></td></tr>
-    <tr style="height:35px; color:black; font-size:18px">
-        <td style="width:50px; text-align:center">項次</td>
-        <td style="width:50px; text-align:center">員編</td>
-        <td style="width:80px; text-align:center">姓名</td>
-        <td style="width:80px; text-align:center">單位</td>
-        <td style="width:80px; text-align:center">職位</td>
-        <td style="width:80px; text-align:center">新增日期</td>
+    <tr><td style="width:100%" colspan="10"><hr /></td></tr>
+    <tr style="height:35px; color:black; font-size:18px">        
+        <td style="width:100px; text-align:center">員編</td>
+        <td style="width:100px; text-align:center">姓名</td>
+        <td style="width:100px; text-align:center">單位</td>
+        <td style="width:100px; text-align:center">職位</td>
+        <td style="width:100px; text-align:center">類別</td>
+        <td style="width:75px; text-align:center">新增日期</td>
         <td style="width:50px; text-align:center">狀態</td>
-        <td style="width:80px; text-align:center">取消日期</td>
-        <td style="width:150px; text-align:center" colspan="3">更新</td>
+        <td style="width:75px; text-align:center">取消日期</td>
+        <td style="width:100px; text-align:center" colspan="2">更新</td>
     </tr>
-    <tr><td style="width:100%" colspan="12"><hr /></td></tr>
-    @{
-        int DataIndexTop = 0;
-        if (Convert.ToInt32(Model.valPageIndex) == 1) {
-            DataIndexTop = 0;
-        } else {
-            if (Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Convert.ToInt32(Model.valPageIndex) - 1)) > Convert.ToInt32(Model.valSumDataCount))
-            {
-                DataIndexTop = Convert.ToInt32(Model.valSumDataCount);
-            }
-            else
-            {
-                DataIndexTop = Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Convert.ToInt32(Model.valPageIndex) - 1) + 1);
-            }
-        }
-        int DataIndexDown = 0;
-        if (Convert.ToInt32(Model.valPageIndex) == 1)
-        {
-            if (Convert.ToInt32(Model.valSumDataCount) < Convert.ToInt32(Model.valPageDataCount))
-            {
-                DataIndexDown = Convert.ToInt32(Model.valSumDataCount);
-            }
-            else
-            {
-                DataIndexDown = Convert.ToInt32(Model.valPageDataCount);
-            }
-        }
-        else
-        {
-            if (Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Model.valPageIndex)) > Convert.ToInt32(Model.valSumDataCount))
-            {
-                DataIndexDown = Convert.ToInt32(Model.valSumDataCount);
-            }
-            else
-            {
-                if (Convert.ToInt32(Model.valSumDataCount) < Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Model.valPageIndex)))
-                {
-                    DataIndexDown = Convert.ToInt32(Model.valSumDataCount);
-                }
-                else
-                {
-                    DataIndexDown = Convert.ToInt32(Convert.ToInt32(Model.valPageDataCount) * Convert.ToInt32(Model.valPageIndex));
-                }
-            }
-        }
-    }
+    <tr><td style="width:100%" colspan="10"><hr /></td></tr>    
     @for (int i = DataIndexTop; i < DataIndexDown; i++)
     {
-        <tr style="height:30px;color:blue;font-size:14px">
-            <td style="width:50px; text-align:center">@Convert.ToInt32(Convert.ToInt32(i)).ToString()</td>
-            <td style="width:50px; text-align:center">@Model.ListEmployeeJobDetail[i].lEmpIndex</td>
-            <td style="width:80px; text-align:center">@Model.ListEmployeeJobDetail[i].lEmpName</td>
-            <td style="width:80px; text-align:center">@Model.ListEmployeeJobDetail[i].lDeptTitle</td>
-            <td style="width:80px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobTitle</td>
-            <td style="width:80px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobJoinDate</td>
+        <tr style="height:30px;color:blue;font-size:14px">            
+            <td style="width:100px; text-align:center">@Model.ListEmployeeJobDetail[i].lEmpIndex</td>
+            <td style="width:100px; text-align:center">@Model.ListEmployeeJobDetail[i].lEmpName</td>
+            <td style="width:100px; text-align:center">@Model.ListEmployeeJobDetail[i].lDeptTitle</td>
+            <td style="width:100px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobTitle</td>
+            <td style="width:100px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobClassTitle</td>
+            <td style="width:75px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobJoinDate</td>
             <td style="width:50px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobStatus</td>
-            <td style="width:80px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobLeaveDate</td>
+            <td style="width:75px; text-align:center">@Model.ListEmployeeJobDetail[i].lJobLeaveDate</td>
             <td style="width:50px; text-align:center">@Ajax.ActionLink("修改", "Update", "EmployeeJobDetail", new { fEmpIndex = Model.ListEmployeeJobDetail[i].lEmpIndex, fDeptIndex = Model.ListEmployeeJobDetail[i].lDeptIndex, fJobIndex = Model.ListEmployeeJobDetail[i].lJobIndex }, new AjaxOptions { HttpMethod = "POST" })</td>
             <td style="width:50px; text-align:center">@Html.ActionLink("刪除", "Delete", "EmployeeJobDetail", new { fEmpIndex = Model.ListEmployeeJobDetail[i].lEmpIndex, fDeptIndex = Model.ListEmployeeJobDetail[i].lDeptIndex, fJobIndex = Model.ListEmployeeJobDetail[i].lJobIndex }, new { onclick = "confirmDataDelete()" })</td>
         </tr>
-        <tr><td style="width:100%" colspan="12"><hr /></td></tr>
+        <tr><td style="width:100%" colspan="10"><hr /></td></tr>
     }
 </table>

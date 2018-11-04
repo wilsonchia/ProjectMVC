@@ -6,10 +6,16 @@
 }
 <script type="text/javascript">
 
+    var baseUrl = '@Html.Raw(Url.Content("~"))';
+    if (baseUrl == '/') { baseUrl = ''; }
+
     $(function ($) {
+        $('#textEmpJoinDate').datepicker({ dateFormat: "yy/mm/dd" });
         $('#hideEmpSex').val('M');
         $('input:radio[name="radioEmpSex"]').change(FormRadioChecked);
-        $('#btnFormC').click(FormDataCheck);
+        $('#selZipAreaCity').change(FormCityChange);
+        $('#selZipArea').change(FormAreaChange);
+        $('#btnForm').click(FormDataCheck);
     })
 
     FormRadioChecked = function () {
@@ -20,48 +26,103 @@
         }
     }
 
-    FormDataCheck = function () {
-        if ($('#textEmpName').val() == "") { $.notify("員工姓名不得空白"); $('#textEmpName').focus(); return false; }
-        if ($('#textEmpMobile').val() == "") { $.notify("行動電話不得空白"); $('#textEmpMobile').focus(); return false; }
-        if ($('#textEmpEmail').val() == "") { $.notify("電子郵件不得空白"); $('#textEmpEmail').focus(); return false; }
-        if ($('#textEmpAddress').val() == "") { $.notify("聯絡地址不得空白"); $('#textEmpAddress').focus(); return false; }
+    FormDataCheck = function () {        
+        if ($('#textEmpName').val() == "") { $('#showMess').notify("員工姓名不得空白"); $('#textEmpName').focus(); return false; }
+        if ($('#textEmpID').val() == "") { $('#showMess').notify("身分證號不得空白!!"); $('#textEmpID').focus(); return false; }
+        if ($('#textEmpJoinDate').val() == "") { $('#showMess').notify("到職日期不得空白!!"); $('#textEmpJoinDate').focus(); return false; }
+        if ($('#textEmpMobile').val() == "") { $('#showMess').notify("行動電話不得空白"); $('#textEmpMobile').focus(); return false; }
+        if ($('#textEmpEmail').val() == "") { $('#showMess').notify("電子郵件不得空白"); $('#textEmpEmail').focus(); return false; }
+        if ($('#textEmpAddress').val() == "") { $('#showMess').notify("聯絡地址不得空白"); $('#textEmpAddress').focus(); return false; }        
+        $('#form1').submit();
+    }
+    
+    FormCityChange = function () {
+        var valCity = $('#selZipAreaCity :selected').val();
+        var url = baseUrl + "SystemDetail/rtnSystemData";
+        var message = "";
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: { "fClass": "addressarea", "fValue": valCity },
+            dataType: "json",
+            async: false,
+            success: function (data) { message = data.d; },
+            error: function (data1) { message = data1.responseText; }
+        });
+        if (message != "") {
+            var aryAreaZip = message.split('_');
+            $('#selZipArea').empty();
+            $('#selZipArea').append($("<option></option>").attr("value", "").text("請選擇區域"));
+            for (var i = 0; i < aryAreaZip.length; i++) {
+                $('#selZipArea').append($("<option></option>").attr("value", aryAreaZip[i].split('/')[0]).text(aryAreaZip[i].split('/')[1]));
+            }
+        }
+        return false;
     }
 
+    FormAreaChange = function () {
+        if ($('#selZipArea :selected').val() != "") {
+            $('#textEmpAddress').val(
+                $('#selZipArea :selected').val() + " " + $('#selZipAreaCity :selected').text() + " " +
+                $('#selZipArea :selected').text() + " " + $('#textEmpAddress').val()
+            );
+        }
+    }
+    
 </script>
-<h2>Create</h2>
 @using (Html.BeginForm(null, null, new { id = "form1" }))
 {
-    @Html.Hidden("hideEmpSex")
-    @ViewBag.showEmpNotation
-    <table style="width:900px" border="1" cellpadding="0" cellspacing="0">
-        <tr style="height:40px;font-weight:bold;font-size:24px"><td style="width:100%; text-align:center" colspan="4">新增員工基本資料</td></tr>
+    @Html.Hidden("hideEmpSex")    
+    <table style="width:900px" border="0" cellpadding="0" cellspacing="0">
+        <tr style="height:40px;font-weight:bold;font-size:24px;"><td style="width:100%; text-align:center" colspan="4">新增員工基本資料<hr /></td></tr>
         <tr style="height:40px;">
-            <td style="width:100px; text-align:left">員工姓名</td>
+            <td style="width:100px; text-align:left;font-weight:bold">員工姓名</td>
             <td style="width:350px; text-align:left">@Html.TextBox("textEmpName", "", new { Style = "width:80%; height:30px" }) </td>
-            <td style="width:100px; text-align:left">員工性別</td>
+            <td style="width:100px; text-align:left;font-weight:bold">身分證號</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpID", "", new { Style = "width:80%; height:30px" })</td>
+        </tr>
+        <tr><td colspan="4"><hr /></td></tr>
+        <tr style="height:40px;">            
+            <td style="width:100px; text-align:left;font-weight:bold">員工性別</td>
             <td style="width:350px; text-align:left">@Html.RadioButton("radioEmpSex", "M", true)男 @Html.RadioButton("radioEmpSex", "F", false)女</td>
+            <td style="width:100px; text-align:left;font-weight:bold">到職日期</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpJoinDate", "", new { Style = "width:80%; height:30px" })</td>
         </tr>
-        <tr style="height:40px;">
-            <td style="width:100px; text-align:left">行動電話</td>
-            <td style="width:350px; text-align:left">@Html.TextBox("textEmpMobile", "", new { Style = "width:80%; height:30px" }) </td>
-            <td style="width:100px; text-align:left">連絡電話</td>
+        <tr><td colspan="4"><hr /></td></tr>
+        <tr style="height:40px;">            
+            <td style="width:100px; text-align:left;font-weight:bold">連絡電話</td>
             <td style="width:350px; text-align:left">@Html.TextBox("textEmpPhone", "", new { Style = "width:80%; height:30px" })  </td>
+            <td style="width:100px; text-align:left;font-weight:bold">行動電話</td>
+            <td style="width:350px; text-align:left">@Html.TextBox("textEmpMobile", "", new { Style = "width:80%; height:30px" }) </td>
         </tr>
+        <tr><td colspan="4"><hr /></td></tr>
         <tr style="height:40px;">
-            <td style="width:100px; text-align:left">電子郵件</td>
-            <td style="width:350px; text-align:left">@Html.TextBox("textEmpEmail", "", new { Style = "width:700px; height:30px" }) </td>
-            <td style="width:100px; text-align:left">聯絡地址</td>
-            <td style="width:350px; text-align:left">@Html.TextBox("textEmpAddress", "", new { Style = "width:700px; height:30px" }) </td>
+            <td style="width:100px; text-align:left;font-weight:bold">電子郵件</td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextBox("textEmpEmail", "", new { Style = "width:95%; height:30px" }) </td>
         </tr>
+        <tr><td colspan="4"><hr /></td></tr>
+        <tr style="height:40px;">            
+            <td style="width:100px; text-align:left;font-weight:bold">聯絡地址</td>
+            <td style="width:800px; text-align:left" colspan="3">
+                @Html.DropDownList("selZipAreaCity", (IEnumerable<SelectListItem>)ViewBag.selAreaCity, new { style = "width:15%; height:35px" })
+                @Html.DropDownList("selZipArea", (IEnumerable<SelectListItem>)ViewBag.selAreaZip, new { style = "width:15%; height:35px" })
+                @Html.TextBox("textEmpAddress", "", new { style = "width:65%; height:35px" }) 
+            </td>
+        </tr>
+        <tr><td colspan="4"><hr /></td></tr>
         <tr style="height:40px;">
-            <td style="width:100px; text-align:left">備註說明</td>
-            <td style="width:350px; text-align:left">@Html.TextArea("textEmpNotation", "", 5, 800, new { Style = "width:80%;" }) </td>
-            <td style="width:100px; text-align:left">其他說明</td>
-            <td style="width:350px; text-align:left">@Html.TextArea("textEmpRemark", "", 5, 800, new { Style = "width:80%;" }) </td>
+            <td style="width:100px; text-align:left;font-weight:bold">備註說明</td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextArea("textEmpNotation", "", 5, 200, new { Style = "width:95%;" }) </td>
         </tr>
+        <tr><td colspan="4"><hr /></td></tr>
+        <tr style="height:40px;">
+            <td style="width:100px; text-align:left;font-weight:bold">其他說明</td>
+            <td style="width:800px; text-align:left" colspan="3">@Html.TextArea("textEmpRemark", "", 5, 200, new { Style = "width:95%;" }) </td>
+        </tr>        
+        <tr><td colspan="4"><span id="showMess" /><hr /></td></tr>
         <tr style="height:40px">
             <td style="width:100%; text-align:center" colspan="4">
-                <input type="submit" value="Create" id="btnFormC" />
+                <input type="submit" value="新增員工工作職位" id="btnForm" style="height:35px; width:200px; font-size:17px; font-weight:bold" />
             </td>
         </tr>
     </table>

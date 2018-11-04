@@ -40,13 +40,13 @@ namespace MVCEmp.Controllers
             ViewBag.selEmpData = selEmpData;
             ViewBag.valNowDateTime = System.DateTime.Now.ToShortDateString();
             var seldeptdata = new List<SelectListItem>();
-            seldeptdata = sdModel.rtnSysDataList("DeptIndex", "請選擇部門", "");
+            seldeptdata = sdModel.rtnSysDataList("DeptIndex", "請選擇部門");
             ViewBag.selDeptIndex = seldeptdata;
             var seljobdata = new List<SelectListItem>();
-            seljobdata = sdModel.rtnSysDataList("JobIndex", "請選擇職位", "");
+            seljobdata = sdModel.rtnSysDataList("JobIndex", "請選擇職位");
             ViewBag.selJobIndex = seljobdata;
             var seljobclass = new List<SelectListItem>();
-            seljobclass = sdModel.rtnSysDataList("JobClass", "請選擇類別", "");
+            seljobclass = sdModel.rtnSysDataList("JobClass", "請選擇類別");
             ViewBag.selJobClass = seljobclass;
             return View();
         }
@@ -71,6 +71,7 @@ namespace MVCEmp.Controllers
 
         public ActionResult Update(string fEmpIndex, string fDeptIndex, string fJobIndex)
         {
+            modelDataClear();
             jobList = jdModel.detailEmployeeJobDetail(fEmpIndex, fDeptIndex, fJobIndex);
             ViewBag.valEmpIndex = fEmpIndex;
             ViewBag.valDeptIndex = fDeptIndex;
@@ -88,10 +89,12 @@ namespace MVCEmp.Controllers
                 ViewBag.valJobStatus = jobList[0].lJobStatus.ToString();
                 ViewBag.valJobLeaveDate = jobList[0].lJobLeaveDate.ToString();
             }
-            ViewBag.valJobLeaveDate = (ViewBag.valJobLeaveDate != "") ? ViewBag.valJobLeaveDate : System.DateTime.Now.ToShortDateString();
+            ViewBag.valJobLeaveDate = (ViewBag.valJobStatus == "O") ? "" : (ViewBag.valJobLeaveDate != "") ? ViewBag.valJobLeaveDate : System.DateTime.Now.ToShortDateString();
             var seljobclass = new List<SelectListItem>();
-            seljobclass = sdModel.rtnSysDataList("JobClass", "請選擇類別", ViewBag.valJobClass);
+            seljobclass = sdModel.rtnSysDataList("JobClass", "請選擇類別");                        
+            
             ViewBag.selJobClass = seljobclass;
+
             return View();
         }
 
@@ -141,6 +144,13 @@ namespace MVCEmp.Controllers
             ViewBag.valPageDataCount = viewModel.valPageDataCount;
             ViewBag.valSumPageCount = viewModel.valSumPageCount;
             return PartialView("List", viewModel);
+        }
+
+        private void modelDataClear() {
+            ViewBag.valEmpIndex = ""; ViewBag.valDeptIndex = ""; ViewBag.valJobIndex = ""; ViewBag.valEmpName = "";
+            ViewBag.valDeptTitle = ""; ViewBag.valJobTitle = ""; ViewBag.valJobClass = ""; ViewBag.valJobNotation = "";
+            ViewBag.valJobRemark = ""; ViewBag.valJoinDateTime = ""; ViewBag.valJobJoinDate = ""; ViewBag.valJobStatus = "";
+            ViewBag.valJobLeaveDate = "";
         }
 
     }
