@@ -88,13 +88,13 @@ namespace MVCEmp.Controllers
                 ViewBag.valJobJoinDate = jobList[0].lJobJoinDate.ToString();
                 ViewBag.valJobStatus = jobList[0].lJobStatus.ToString();
                 ViewBag.valJobLeaveDate = jobList[0].lJobLeaveDate.ToString();
+                ViewBag.valJobClassTitle = jobList[0].lJobClassTitle.ToString();
             }
             ViewBag.valJobLeaveDate = (ViewBag.valJobStatus == "O") ? "" : (ViewBag.valJobLeaveDate != "") ? ViewBag.valJobLeaveDate : System.DateTime.Now.ToShortDateString();
-            var seljobclass = new List<SelectListItem>();
-            seljobclass = sdModel.rtnSysDataList("JobClass", "請選擇類別");                        
-            
-            ViewBag.selJobClass = seljobclass;
-
+            List<SelectListItem> seljobclass = new List<SelectListItem>();            
+            seljobclass = sdModel.rtnSysDataList("JobClass", "請選擇類別");
+            //seljobclass.Where(x => x.Value == ViewBag.valJobClass.Trim()).First().Selected = true;
+            ViewBag.selJobClass = seljobclass;            
             return View();
         }
 

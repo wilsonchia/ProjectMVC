@@ -120,15 +120,14 @@ namespace MVCEmp.Models
         public List<SelectListItem> rtnSysDataList(string funSystemClass, string funNullTitle)
         {
             List<SelectListItem> list = new List<SelectListItem>();
-            List<listSystemDetail> sdList = new List<listSystemDetail>();            
-            sdList = reListSystemDetail();
             list.Add(new SelectListItem { Value = "", Text = funNullTitle });
             if (funSystemClass != "")
             {
+                List<listSystemDetail> sdList = new List<listSystemDetail>();
+                sdList = reListSystemDetail();
                 if (sdList.Where(x => x.lSystemClass == funSystemClass).Count() > 0)
                 {
                     sdList = sdList.Where(x => x.lSystemClass == funSystemClass).ToList();
-
                     for (int i = 0; i < sdList.Count; i++)
                     {
                         list.Add(new SelectListItem { Value = sdList[i].lSystemValue.ToString(), Text = sdList[i].lSystemTitle.ToString() });

@@ -22,7 +22,7 @@ namespace MVCEmp.Models
         public string valJobTitle { get; set; }
         public string valJobDateTime { get; set; }
         public string valJobClass { get; set; }
-        public string valClassTitle { get; set; }
+        public string valJobClassTitle { get; set; }
         public string valJobNotation { get; set; }
         public string valJobRemark { get; set; }
         public string valJobStatus { get; set; }
